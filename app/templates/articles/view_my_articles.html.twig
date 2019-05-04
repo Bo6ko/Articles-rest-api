@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Моите профил{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+
+        <h2>Моите публикации:</h2>
+
+        {% for msg in app.session.flashbag.get('editArticle') %}
+            <div style="color: cyan; font-size: 24px; text-align: center;">{{ msg }}</div>
+        {% endfor %}
+        {% for msg in app.session.flashbag.get('deleteArticle') %}
+            <div style="color: red; font-size: 24px; text-align: center;">{{ msg }}</div>
+        {% endfor %}
+
+        {% for article in articlesByUsername %}
+            <div class="articles">
+                <div class="article-header">
+                    <h3><a href="{{ path("edit_article", {id: article.id}) }}">{{ article.title }}</a></h3>
+                    <span class="created-by">Създаден от: {{ article.username }}</span>
+                    <span class="likes">Харесвания: (<span class="postLikes">{{ article.count }}</span> likes)</span>
+                    <span style="float: right"><a class="delete" href="{{ path("delete_article", {id: article.id}) }}">Изтриване на публикацията</a></span><br/>
+                </div>
+                <hr style="margin: 0px;"/>
+                <div class="article-body">
+                    {{ article.body }}
+                </div>
+                <hr style="margin: 0px;"/>
+                <div class="article-foot">
+                    <form method="post" class="addComment" action="{{ path("add_comment", {id: article.id}) }}">
+                        <input class="form-control" name="comment" type="text" />
+                        <input class="btn btn-primary mb-2 btn-comment" name="btnAdd" type="submit" value="Добави коментар" style="margin-bottom: 2px!important;"/>
+                    </form>
+                </div>
+                <div class="comments">
+                    {% for comment in article.comments %}
+                        <div class="comment"><i style="color: blue">Коментар създаден от {{ comment.username }}:</i> {{ comment.comment }} <button style="margin-bottom: 2px!important;" class="btn btn-primary mb-2 likeComment" data-article="{{ article.id }}" data-id="{{ comment.id }}">like</button> (<span class="commentLikes">{{ comment.count }}</span> likes)</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="paginator">
+            {% if app.request.get('page', 1) > 1 %}
+                <a class="prev page-numbers" href="{{ path('my_articles', {page: app.request.get('page') - 1}) }}"><</a>
+            {% endif %}
+
+            {% for i in 1..pages %}
+                <span class="page-numbers current"><a href="{{ path('my_articles', {page: i}) }}">{{ i }}</a></span>
+            {% endfor %}
+
+            {% if app.request.get('page', 1) < pages and app.request.get('page') is not null %}
+                <a class="next page-numbers" href="{{ path('my_articles', {page: app.request.get('page') + 1}) }}">></a>
+            {% elseif app.request.get('page', 1) < pages and app.request.get('page') is null %}
+                <a class="next page-numbers" href="{{ path('my_articles', {page: app.request.get('page') + 2}) }}">></a>
+            {% endif %}
+        </div>
+
+    </div>
+
+
+{% endblock %}
