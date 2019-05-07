@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Начална страница{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+
+
+        {{ form_start(articleForm, {'attr': {'class': 'articleForm'} }) }}
+        <label>Заглавие:</label>
+        {{ form_widget(articleForm.title) }}
+        <label>Текст:</label>
+        {{ form_widget(articleForm.body, {'attr': {'class': 'form-control text-area'} }) }}
+        {{ form_end(articleForm) }}
+
+        {% for msg in app.session.flashbag.get('addArticle') %}
+            <div style="color: cyan; font-size: 24px; text-align: center;">{{ msg }}</div>
+        {% endfor %}
+        {% for msg in app.session.flashbag.get('ErrorArticle') %}
+            <div style="color: red; font-size: 24px; text-align: center;">{{ msg }}</div>
+        {% endfor %}
+
+        <hr/>
+
+
+    </div>
+
+
+{% endblock %}
